@@ -1,9 +1,11 @@
 package stepDefinitions;
 
+import cucumber.api.java.Before;
 import cucumber.api.java.pt.Dado;
 import cucumber.api.java.pt.Então;
 import cucumber.api.java.pt.Quando;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import pageObjects.CadastroPage;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,23 +14,31 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Created by assisjrs on 04/04/17.
  */
 public class  InserçãoDeUsuariosSteps {
-    @Autowired
+    private WebDriver driver;
     private CadastroPage cadastroPage;
 
-    @Dado("^que eu tenha o nome do usuário como \"([^\"]*)\" e o email como \"([^\"]*)\"$")
-    public void queEuTenhaONomeDoUsuárioComoEOEmail(final String nome, final String email) {
+    @Before
+    public void before() {
+        driver = new ChromeDriver();
+        cadastroPage =  new CadastroPage(driver);
+    }
+
+    @Dado("^que já existe um usuário cadastrado$")
+    public void queJáExisteUmUsuárioCadastrado() {}
+
+    @Dado("^que o nome do usuário é \"([^\"]*)\" e o email \"([^\"]*)\"$")
+    public void queONomeDoUsuárioÉEOEmail(final String nome, final String email) {
         cadastroPage.setNome(nome);
         cadastroPage.setEmail(email);
     }
 
-    @Quando("^eu insiro o usuário$")
-    public void euInsiroOUsuário() throws InterruptedException {
-        cadastroPage.acessar();
+    @Quando("^o usuário é inserido$")
+    public void oUsuárioÉInserido() {
         cadastroPage.novoUsuario();
     }
 
-    @Então("^Deve exibir (\\d+) usuários na lista$")
-    public void deveExibirNaLista(int usuariosCadastrados) throws InterruptedException{
+    @Então("^Devem existir (\\d+) usuários$")
+    public void devemExistirUsuários(int usuariosCadastrados) throws Throwable {
         assertThat(cadastroPage.getUsuarios().size()).isEqualTo(usuariosCadastrados);
     }
 }
