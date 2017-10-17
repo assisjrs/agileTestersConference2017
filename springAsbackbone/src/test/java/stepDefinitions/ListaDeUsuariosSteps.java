@@ -30,14 +30,6 @@ public class ListaDeUsuariosSteps {
 
     private Request usuarios;
 
-    @Dado("^exista o usuário \"([^\"]*)\" cadastrado$")
-    public void existaOUsuárioCadastrado(String arg0) throws Throwable {
-        dbUnit.cleanInsert("VisualizarTodosOsOutrosUsuarios.xml");
-    }
-
-    @Quando("^é exibida a lista de usuários$")
-    public void éExibidaAListaDeUsuários() {}
-
     @Dado("^que deve-se sempre ter o administrador cadastrado$")
     public void queDeveSeSempreTerOAdministradorCadastrado() throws Throwable {
         dbUnit.cleanInsert("EncontrarUsuarioPorEmail.xml");
@@ -54,6 +46,14 @@ public class ListaDeUsuariosSteps {
         assertThat(usuarios).column("nome")//
                 .value().isEqualTo(usuario);
     }
+
+    @Dado("^exista o usuário \"([^\"]*)\" cadastrado$")
+    public void existaOUsuárioCadastrado(String arg0) throws Throwable {
+        dbUnit.cleanInsert("VisualizarTodosOsOutrosUsuarios.xml");
+    }
+
+    @Quando("^é exibida a lista de usuários$")
+    public void éExibidaAListaDeUsuários(){}
 
     @Então("^a lista deve conter o usuário \"([^\"]*)\"$")
     public void aListaDeveConterOUsuário(String usuario) {

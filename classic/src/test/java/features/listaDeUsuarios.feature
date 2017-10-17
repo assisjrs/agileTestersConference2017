@@ -1,15 +1,14 @@
 #language: pt
 Funcionalidade: Listar os usuários
 
-  Narrativa: Eu como usuario do sistema posso visualizar os usuários.
+  Narrativa: Os usuarios do sistema podem visualizar a lista de usuários.
 
-  Cenário: Eu que sou um usuário posso visualizar todos os outros usuários
-    Dado que o sistema tenha o usuário "Francisco" cadastrado
-    Quando eu visualizo a lista de usuários
-    Então Devo reconhecer na lista o usuário "Francisco"
+  Cenário: Um usuário pode visualizar todos os outros usuários
+    Dado exista o usuário "Francisco" cadastrado
+    Quando é exibida a lista de usuários
+    Então a lista deve conter o usuário "Francisco"
 
-  Cenário: Eu que estou operando o sistema desejo saber se
-  o email "<administrador@concrete.com.br>" encontra-se sempre cadastrado no banco.
-    Dado que o sistema deve ter o administrador sempre cadastrado
-    Quando eu consulto o banco de dados pelo email "administrador@concrete.com.br"
-    Então Devo encontrar no o email associado ao usuário "Administrador"
+  Cenário: Um operador do sistema pode encontrar o email do administrador
+    Dado que deve-se sempre ter o administrador cadastrado
+    Quando pesquisa-se pelo email "administrador@concrete.com.br"
+    Então o email deve estar associado ao usuário "Administrador"

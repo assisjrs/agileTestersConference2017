@@ -1,16 +1,17 @@
 package stepDefinitions;
 
 import config.DBUnit;
+import cucumber.api.java.Before;
 import cucumber.api.java.pt.Dado;
 import cucumber.api.java.pt.Então;
 import cucumber.api.java.pt.Quando;
 import org.assertj.db.type.Request;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.openqa.selenium.chrome.ChromeDriver;
 import pageObjects.CadastroPage;
 
-import javax.sql.DataSource;
-
+import static config.DBUnit.dbUnitDatabaseConnection;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.db.api.Assertions.assertThat;
 
@@ -18,46 +19,48 @@ import static org.assertj.db.api.Assertions.assertThat;
  * Created by assisjrs on 04/04/17.
  */
 public class ListaDeUsuariosSteps {
-    @Autowired
-    private CadastroPage cadastroPage;
-
-    @Autowired
-    private DataSource dataSource;
-
-    @Autowired
-    private DBUnit dbUnit;
+    private DBUnit dbUnit = new DBUnit();
 
     private Request usuarios;
 
-    @Dado("^que o sistema tenha o usuário \"([^\"]*)\" cadastrado$")
-    public void queOSistemaTenhaOUsuárioCadastrado(final String usuario) throws Throwable {
+    private WebDriver driver;
+    private CadastroPage cadastroPage;
+
+    @Before
+    public void before() {
+        driver = new ChromeDriver();
+        cadastroPage =  new CadastroPage(driver);
+    }
+
+    @Dado("^exista o usuário \"([^\"]*)\" cadastrado$")
+    public void existaOUsuárioCadastrado(String arg0) throws Throwable {
         dbUnit.cleanInsert("VisualizarTodosOsOutrosUsuarios.xml");
     }
 
-    @Quando("^eu visualizo a lista de usuários$")
-    public void euVisualizoAListaDeUsuários() {}
+    @Quando("^é exibida a lista de usuários$")
+    public void éExibidaAListaDeUsuários() {}
 
-    @Então("^Devo reconhecer na lista o usuário \"([^\"]*)\"$")
-    public void devoReconhecerNaListaOUsuário(final String usuario) {
-        final WebElement usuarioNaTabela = cadastroPage.getUsuarios().getRowBy(usuario);
-
-        assertThat(usuarioNaTabela).isNotNull();
-    }
-
-    @Dado("^que o sistema deve ter o administrador sempre cadastrado$")
-    public void queOSistemaDeveTerOAdministradorSempreCadastrado() throws Throwable {
+    @Dado("^que deve-se sempre ter o administrador cadastrado$")
+    public void queDeveSeSempreTerOAdministradorCadastrado() throws Throwable {
         dbUnit.cleanInsert("EncontrarUsuarioPorEmail.xml");
     }
 
-    @Quando("^eu consulto o banco de dados pelo email \"([^\"]*)\"$")
-    public void euConsultoOBancoDeDadosPeloEmail(final String email) {
-        usuarios = new Request(dataSource, "select nome from usuario where email = ?");
+    @Quando("^pesquisa-se pelo email \"([^\"]*)\"$")
+    public void sePesquisaPeloEmail(String email) {
+        usuarios = new Request(dbUnitDatabaseConnection(), "select nome from usuario where email = ?");
         usuarios.setParameters(email);
     }
 
-    @Então("^Devo encontrar no o email associado ao usuário \"([^\"]*)\"$")
-    public void devoEncontrarNoOEmailAssociadoAoUsuário(final String usuario) {
+    @Então("^o email deve estar associado ao usuário \"([^\"]*)\"$")
+    public void oEmailDeveEstarAssociadoAoUsuário(String usuario) {
         assertThat(usuarios).column("nome")//
-                            .value().isEqualTo(usuario);
+                .value().isEqualTo(usuario);
+    }
+
+    @Então("^a lista deve conter o usuário \"([^\"]*)\"$")
+    public void aListaDeveConterOUsuário(String usuario) {
+        final WebElement usuarioNaTabela = cadastroPage.getUsuarios().getRowBy(usuario);
+
+        assertThat(usuarioNaTabela).isNotNull();
     }
 }
