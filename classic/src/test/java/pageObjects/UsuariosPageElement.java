@@ -1,36 +1,40 @@
 package pageObjects;
 
-import config.PageElement;
-import config.WaitMe;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.Iterator;
+import java.util.AbstractList;
 
 import static org.openqa.selenium.By.tagName;
 import static org.openqa.selenium.By.xpath;
 
-@PageElement
-public class UsuariosPageElement implements Iterable<WebElement> {
-    @Autowired
-    private WebDriver driver;
+public class UsuariosPageElement extends AbstractList<WebElement>{
 
-    @WaitMe(onlyImplicity = false)
+    private WebDriver driver;
+    private WebDriverWait wait;
+
     @FindBy(id = "dataTable_data")
     private WebElement dataTable_data;
 
-    public int size() throws InterruptedException {
+    public UsuariosPageElement(final WebDriver driver){
+        this.driver = driver;
+        wait = new WebDriverWait(driver, 60);
+    }
+
+    @Override
+    public int size() {
         driver.get("http://localhost:9090/index.xhtml");
 
         return dataTable_data.findElements(tagName("tr")).size();
     }
 
     @Override
-    public Iterator<WebElement> iterator() {
+    public WebElement get(int i) {
         driver.get("http://localhost:9090/index.xhtml");
-        return dataTable_data.findElements(tagName("tr")).iterator();
+
+        return dataTable_data.findElements(tagName("tr")).get(i);
     }
 
     public WebElement getRowBy(final String usuario) {
